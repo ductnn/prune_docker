@@ -28,7 +28,7 @@ def get_docker_ps():
         [i.strip() for i in line.split('  ') if i.strip()]
         for line in subprocess.check_output(
             ['docker', 'ps', '-a'],
-            encoding='ascii'
+            encoding='utf-8'
         ).splitlines()
     ]
     headers, rows = output[0], output[1:]
@@ -54,8 +54,8 @@ def untagged_containers(rows=None):
     rows = rows or get_docker_ps()
 
     return [
-        i.CONTAINERID
-        for i in rows if re.match('[0-9a-f]{12}', i.IMAGE)
+        row.CONTAINERID
+        for row in rows if row.STATUS == 'Created'
     ]
 
 
@@ -70,24 +70,26 @@ def untagged_images(rows=None):
 
 
 if __name__ == '__main__':
-    # container_ids = untagged_containers()
+    container_ids = untagged_containers()
     image_ids = untagged_images()
 
     print(image_ids)
 
-    if not image_ids:
+    if not image_ids and not container_ids:
         print("Nothing to cleanup!")
         sys.exit()
 
-    # if container_ids:
-    #     print("Removing containers using untagged images...")
-    #     for container_id in container_ids:
-    #         try:
-    #             output = subprocess.check_output(['docker', 'rm', container_id])
-    #         except subprocess.CalledProcessError as e:
-    #             print(e)
-    #             sys.exit()
-    #         print(output)
+    if container_ids:
+        print("Removing containers using untagged images...")
+        for container_id in container_ids:
+            try:
+                output = subprocess.check_output(
+                    ['docker', 'rm', '-f', container_id]
+                )
+            except subprocess.CalledProcessError as e:
+                print(e)
+                sys.exit()
+            print(output)
 
     if image_ids:
         print("Removing untagged images...")
