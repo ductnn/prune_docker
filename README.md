@@ -7,7 +7,7 @@ A lazy tool for removing images and containers untagged in your machine writen
 in Golang.
 
 ## Feature
-- Remove `images` have tag "<none>".
+- Remove `images` have tag `<none>`.
 - Remove `containers` do not running. 
 
 ![](images/images_none.png)
