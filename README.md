@@ -4,7 +4,7 @@
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 A lazy tool for removing images and containers untagged in your machine writen
-in Golang.
+in Python.
 
 ## Feature
 - Remove `images` have tag `<none>`.
